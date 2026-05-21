@@ -28,8 +28,16 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pillow Summary - Stop Saving. Start Learning.",
     description:
-      "Set a learning goal. Save articles. Get a 3-minute AI knowledge brief daily.",
+      "Set a learning goal. Save articles. Get a 3-minute AI knowledge brief daily. The smart alternative to Pocket & Omnivore.",
     type: "website",
+    siteName: "Pillow Summary",
+    url: "https://pillow-summary-web.vercel.app",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pillow Summary - Stop Saving. Start Learning.",
+    description:
+      "Your read-later graveyard ends here. AI reads your saved articles and gives you a 3-min daily brief.",
   },
 };
 
