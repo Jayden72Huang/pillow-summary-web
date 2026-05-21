@@ -10,7 +10,7 @@ const config: CapacitorConfig = {
   },
   ios: {
     contentInset: 'automatic',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: '#0a0a0a',
     preferredContentMode: 'mobile',
   },
 };

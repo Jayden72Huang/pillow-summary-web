@@ -12,6 +12,61 @@ interface ProviderConfig {
   parseResponse: (data: Record<string, unknown>) => string;
 }
 
+class ApiError extends Error {
+  public readonly status: number;
+  public readonly code: string;
+
+  constructor(message: string, status: number, code: string) {
+    super(message);
+    this.name = "ApiError";
+    this.status = status;
+    this.code = code;
+  }
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isAbortError(error: unknown): boolean {
+  return (
+    isRecord(error) &&
+    "name" in error &&
+    typeof error.name === "string" &&
+    error.name === "AbortError"
+  );
+}
+
+function jsonError(message: string, status: number, code: string) {
+  return NextResponse.json({ error: message, code }, { status });
+}
+
+async function parseSummarizeRequest(req: NextRequest): Promise<{
+  url: string;
+  goal: string;
+}> {
+  let body: unknown;
+
+  try {
+    body = await req.json();
+  } catch {
+    throw new ApiError("Request body must be valid JSON", 400, "INVALID_JSON");
+  }
+
+  if (!isRecord(body)) {
+    throw new ApiError("Request body must be a JSON object", 400, "INVALID_BODY");
+  }
+
+  const url = typeof body.url === "string" ? body.url.trim() : "";
+  const goal = typeof body.goal === "string" ? body.goal.trim() : "";
+
+  if (!url || !goal) {
+    throw new ApiError("URL and goal are required", 400, "MISSING_FIELDS");
+  }
+
+  return { url, goal };
+}
+
 function getProvider(): ProviderConfig | null {
   const provider = (process.env.AI_PROVIDER || "auto").toLowerCase();
 
@@ -136,7 +191,13 @@ async function fetchPageContent(url: string): Promise<string> {
       signal: controller.signal,
     });
 
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    if (!res.ok) {
+      throw new ApiError(
+        `The URL returned HTTP ${res.status}`,
+        res.status >= 500 ? 502 : 422,
+        "FETCH_HTTP_ERROR"
+      );
+    }
 
     const html = await res.text();
     const text = html
@@ -156,6 +217,12 @@ async function fetchPageContent(url: string): Promise<string> {
       .trim();
 
     return text.slice(0, 8000);
+  } catch (error) {
+    if (error instanceof ApiError || isAbortError(error)) {
+      throw error;
+    }
+
+    throw new ApiError("Could not fetch this URL", 502, "FETCH_FAILED");
   } finally {
     clearTimeout(timeout);
   }
@@ -167,6 +234,56 @@ interface SummaryResult {
   keyInsights: string[];
   relevanceScore: number;
   readTime: string;
+}
+
+function normalizeSummaryResult(value: unknown): SummaryResult {
+  if (!isRecord(value)) {
+    throw new ApiError("AI response was not a JSON object", 502, "AI_RESPONSE_INVALID");
+  }
+
+  const title = typeof value.title === "string" ? value.title.trim() : "";
+  const summary = typeof value.summary === "string" ? value.summary.trim() : "";
+  const readTime = typeof value.readTime === "string" ? value.readTime.trim() : "";
+  const score =
+    typeof value.relevanceScore === "number"
+      ? value.relevanceScore
+      : Number(value.relevanceScore);
+  const keyInsights = Array.isArray(value.keyInsights)
+    ? value.keyInsights.filter((item): item is string => typeof item === "string")
+    : [];
+
+  if (!title || !summary || !readTime || !Number.isFinite(score)) {
+    throw new ApiError(
+      "AI response was missing required fields",
+      502,
+      "AI_RESPONSE_INVALID"
+    );
+  }
+
+  return {
+    title,
+    summary,
+    keyInsights,
+    relevanceScore: Math.min(100, Math.max(0, Math.round(score))),
+    readTime,
+  };
+}
+
+function parseAIJson(text: string): unknown {
+  try {
+    return JSON.parse(text);
+  } catch {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch {
+        // Fall through to the stable API error below.
+      }
+    }
+  }
+
+  throw new ApiError("AI response was not valid JSON", 502, "AI_RESPONSE_INVALID");
 }
 
 async function callAI(
@@ -202,18 +319,33 @@ async function callAI(
 
   if (!res.ok) {
     const err = await res.text();
-    throw new Error(`AI API error (${res.status}): ${err.slice(0, 200)}`);
+    console.error(`AI API error (${res.status}): ${err.slice(0, 200)}`);
+    throw new ApiError("AI provider request failed", 502, "AI_PROVIDER_ERROR");
   }
 
-  const data = await res.json();
-  const text = provider.parseResponse(data);
-
   try {
-    return JSON.parse(text);
-  } catch {
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) return JSON.parse(jsonMatch[0]);
-    throw new Error("Failed to parse AI response");
+    const data = (await res.json()) as Record<string, unknown>;
+    const text = provider.parseResponse(data);
+
+    if (typeof text !== "string" || !text.trim()) {
+      throw new ApiError(
+        "AI provider returned an empty response",
+        502,
+        "AI_RESPONSE_INVALID"
+      );
+    }
+
+    return normalizeSummaryResult(parseAIJson(text));
+  } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
+    throw new ApiError(
+      "AI provider returned an unexpected response",
+      502,
+      "AI_RESPONSE_INVALID"
+    );
   }
 }
 
@@ -257,26 +389,27 @@ function generateFallbackSummary(
 
 export async function POST(req: NextRequest) {
   try {
-    const { url, goal } = await req.json();
-
-    if (!url || !goal) {
-      return NextResponse.json({ error: "URL and goal are required" }, { status: 400 });
-    }
+    const { url, goal } = await parseSummarizeRequest(req);
 
     let parsedUrl: URL;
     try {
       parsedUrl = new URL(url);
     } catch {
-      return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
+      return jsonError("Invalid URL", 400, "INVALID_URL");
+    }
+
+    if (!["http:", "https:"].includes(parsedUrl.protocol)) {
+      return jsonError("URL must use HTTP or HTTPS", 400, "INVALID_URL_PROTOCOL");
     }
 
     const platform = detectPlatform(parsedUrl.toString());
     const content = await fetchPageContent(parsedUrl.toString());
 
     if (!content || content.length < 50) {
-      return NextResponse.json(
-        { error: "Could not extract content from this URL" },
-        { status: 422 }
+      return jsonError(
+        "Could not extract content from this URL",
+        422,
+        "CONTENT_EXTRACTION_FAILED"
       );
     }
 
@@ -292,9 +425,15 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ...result, platform });
   } catch (error) {
     console.error("Summarize error:", error);
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to analyze URL" },
-      { status: 500 }
-    );
+
+    if (error instanceof ApiError) {
+      return jsonError(error.message, error.status, error.code);
+    }
+
+    if (isAbortError(error)) {
+      return jsonError("Timed out while fetching this URL", 504, "FETCH_TIMEOUT");
+    }
+
+    return jsonError("Failed to analyze URL", 500, "INTERNAL_ERROR");
   }
 }

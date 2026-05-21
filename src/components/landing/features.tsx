@@ -15,48 +15,42 @@ const features = [
     title: "Goal-Driven Reading",
     description:
       'Set what you want to learn. Every saved article is scored by how relevant it is to YOUR goal. No more "save everything, read nothing."',
-    color: "text-amber",
-    bg: "bg-amber/10",
+    color: "text-soft-blue",
   },
   {
     icon: BrainCircuit,
     title: "AI Daily Brief",
     description:
       "Every evening, get a 3-minute knowledge brief. AI extracts the key insights from everything you saved today, organized around your goal.",
-    color: "text-violet",
-    bg: "bg-violet/10",
+    color: "text-soft-pink",
   },
   {
     icon: Link2,
     title: "Save From Anywhere",
     description:
       "Paste a URL and we'll extract, summarize, and score it instantly. Works with articles, YouTube videos, tweets, newsletters — anything.",
-    color: "text-emerald",
-    bg: "bg-emerald/10",
+    color: "text-soft-gold",
   },
   {
     icon: TrendingUp,
     title: "Learning Streaks",
     description:
       "Build a daily reading habit with gentle streak tracking. See your knowledge grow over time with progress visualization.",
-    color: "text-amber",
-    bg: "bg-amber/10",
+    color: "text-soft-blue",
   },
   {
     icon: Clock,
     title: "Bedtime Mode",
     description:
-      "Designed for your wind-down routine. Warm colors, calm typography, distraction-free. Like a bedtime story, but for your brain.",
-    color: "text-violet",
-    bg: "bg-violet/10",
+      "Designed for your wind-down routine. Calm typography, distraction-free. Like a bedtime story, but for your brain.",
+    color: "text-soft-pink",
   },
   {
     icon: Shield,
     title: "Your Data, Your Control",
     description:
       "After Pocket & Omnivore shut down, we know trust matters. Export anytime. Your highlights, notes, and progress are always yours.",
-    color: "text-emerald",
-    bg: "bg-emerald/10",
+    color: "text-soft-gold",
   },
 ];
 
@@ -74,18 +68,14 @@ export function Features() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className="group p-6 rounded-2xl bg-card border border-border hover:border-amber/30 transition-all duration-300"
+              className="p-6 rounded-2xl bg-card/50 border border-border hover:border-soft-blue/20 transition-all duration-300"
             >
-              <div
-                className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${feature.bg} mb-4`}
-              >
-                <feature.icon className={`w-6 h-6 ${feature.color}`} />
-              </div>
-              <h3 className="text-lg font-semibold mb-2">{feature.title}</h3>
+              <feature.icon className={`w-5 h-5 ${feature.color} mb-4`} />
+              <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
                 {feature.description}
               </p>

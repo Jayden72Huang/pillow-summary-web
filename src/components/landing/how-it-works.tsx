@@ -1,46 +1,36 @@
 "use client";
 
-import { Target, Link2, BrainCircuit, Moon } from "lucide-react";
-
 const steps = [
   {
     step: "01",
-    icon: Target,
     title: "Set Your Goal",
     description: '"I want to learn React in 30 days" or "Understand AI basics"',
-    color: "text-amber",
-    bg: "bg-amber/10",
-    border: "border-amber/20",
+    color: "text-soft-blue",
+    dot: "bg-soft-blue",
   },
   {
     step: "02",
-    icon: Link2,
     title: "Save Content",
     description:
       "Paste URLs throughout the day — articles, videos, tweets, anything",
-    color: "text-violet",
-    bg: "bg-violet/10",
-    border: "border-violet/20",
+    color: "text-soft-pink",
+    dot: "bg-soft-pink",
   },
   {
     step: "03",
-    icon: BrainCircuit,
     title: "AI Analyzes",
     description:
       "We score relevance, extract insights, and organize by your goal",
-    color: "text-emerald",
-    bg: "bg-emerald/10",
-    border: "border-emerald/20",
+    color: "text-soft-gold",
+    dot: "bg-soft-gold",
   },
   {
     step: "04",
-    icon: Moon,
     title: "Read Your Brief",
     description:
       "Every evening, a 3-minute knowledge brief with only what matters",
-    color: "text-amber",
-    bg: "bg-amber/10",
-    border: "border-amber/20",
+    color: "text-soft-blue",
+    dot: "bg-soft-blue",
   },
 ];
 
@@ -61,23 +51,17 @@ export function HowItWorks() {
           {steps.map((item) => (
             <div
               key={item.step}
-              className={`relative p-6 rounded-2xl bg-card border ${item.border} hover:border-amber/30 transition-all`}
+              className="flex items-start gap-4 p-6 rounded-2xl bg-card/30 border border-border"
             >
-              <div className="flex items-start gap-4">
-                <div
-                  className={`flex items-center justify-center w-12 h-12 rounded-xl ${item.bg} shrink-0`}
-                >
-                  <item.icon className={`w-6 h-6 ${item.color}`} />
+              <div className={`w-2 h-2 rounded-full ${item.dot} mt-2 shrink-0`} />
+              <div>
+                <div className={`text-xs font-mono ${item.color} mb-1`}>
+                  STEP {item.step}
                 </div>
-                <div>
-                  <div className="text-xs font-mono text-muted-foreground mb-1">
-                    STEP {item.step}
-                  </div>
-                  <h3 className="text-lg font-semibold mb-1">{item.title}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {item.description}
-                  </p>
-                </div>
+                <h3 className="text-base font-semibold mb-1">{item.title}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
               </div>
             </div>
           ))}

@@ -2,13 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import {
-  Sparkles,
-  Link2,
-  Target,
   Loader2,
   CheckCircle2,
   ArrowRight,
-  Flame,
   Copy,
   Check,
 } from "lucide-react";
@@ -23,6 +19,52 @@ interface SummaryResult {
   relevanceScore: number;
   readTime: string;
   platform: string;
+}
+
+async function copyTextToClipboard(text: string): Promise<boolean> {
+  if (navigator.clipboard?.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      return true;
+    } catch {
+      // Fall through to the textarea fallback for iOS WKWebView.
+    }
+  }
+
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.readOnly = true;
+  textarea.style.position = "fixed";
+  textarea.style.top = "0";
+  textarea.style.left = "0";
+  textarea.style.width = "1px";
+  textarea.style.height = "1px";
+  textarea.style.opacity = "0";
+  textarea.style.pointerEvents = "none";
+
+  const selection = document.getSelection();
+  const previousRange =
+    selection && selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  textarea.setSelectionRange(0, textarea.value.length);
+
+  let copied = false;
+  try {
+    copied = document.execCommand("copy");
+  } catch {
+    copied = false;
+  } finally {
+    document.body.removeChild(textarea);
+    if (selection && previousRange) {
+      selection.removeAllRanges();
+      selection.addRange(previousRange);
+    }
+  }
+
+  return copied;
 }
 
 export function Demo() {
@@ -86,10 +128,11 @@ export function Demo() {
     }
   };
 
-  const handleCopy = () => {
+  const handleCopy = async () => {
     if (!result) return;
     const text = `${result.title}\n\n${result.summary}\n\nKey Insights:\n${result.keyInsights.map((i) => `- ${i}`).join("\n")}`;
-    navigator.clipboard.writeText(text);
+    const didCopy = await copyTextToClipboard(text);
+    if (!didCopy) return;
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -101,8 +144,8 @@ export function Demo() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-emerald bg-emerald/10 border-emerald/30";
-    if (score >= 50) return "text-amber bg-amber/10 border-amber/30";
+    if (score >= 80) return "text-soft-blue bg-soft-blue/10 border-soft-blue/30";
+    if (score >= 50) return "text-soft-gold bg-soft-gold/10 border-soft-gold/30";
     return "text-muted-foreground bg-secondary border-border";
   };
 
@@ -110,15 +153,14 @@ export function Demo() {
     <section
       id="demo"
       ref={demoRef}
-      className="py-24 px-6 bg-gradient-to-b from-transparent via-card/30 to-transparent"
+      className="py-24 px-6"
     >
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
           <Badge
             variant="outline"
-            className="mb-4 border-amber/30 text-amber"
+            className="mb-4 border-soft-blue/30 text-soft-blue"
           >
-            <Sparkles className="w-3 h-3 mr-1" />
             Live Demo
           </Badge>
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
@@ -129,15 +171,15 @@ export function Demo() {
           </p>
         </div>
 
-        <div className="bg-card border border-border rounded-2xl p-8 shadow-2xl shadow-black/20">
+        <div className="bg-card/50 border border-border rounded-2xl p-8 backdrop-blur-sm">
           {step === "goal" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-amber/10">
-                  <Target className="w-4 h-4 text-amber" />
+                <div className="w-6 h-6 rounded-full bg-soft-blue/20 flex items-center justify-center">
+                  <span className="text-xs font-mono text-soft-blue">1</span>
                 </div>
                 <h3 className="font-semibold">
-                  Step 1: What do you want to learn?
+                  What do you want to learn?
                 </h3>
               </div>
 
@@ -146,7 +188,7 @@ export function Demo() {
                   <button
                     key={g}
                     onClick={() => handleSetGoal(g)}
-                    className="p-3 text-left text-sm rounded-xl border border-border hover:border-amber/40 hover:bg-amber/5 transition-all"
+                    className="p-3 text-left text-sm rounded-xl border border-border hover:border-soft-blue/30 hover:bg-soft-blue/5 transition-all"
                   >
                     {g}
                   </button>
@@ -166,7 +208,7 @@ export function Demo() {
                 {goal.trim() && (
                   <Button
                     size="sm"
-                    className="absolute right-1 top-1 bg-amber text-amber-foreground hover:bg-amber/90"
+                    className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/90"
                     onClick={() => handleSetGoal(goal)}
                   >
                     Next
@@ -180,23 +222,22 @@ export function Demo() {
           {step === "url" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-violet/10">
-                  <Link2 className="w-4 h-4 text-violet" />
+                <div className="w-6 h-6 rounded-full bg-soft-pink/20 flex items-center justify-center">
+                  <span className="text-xs font-mono text-soft-pink">2</span>
                 </div>
                 <h3 className="font-semibold">
-                  Step 2: Paste an article URL
+                  Paste an article URL
                 </h3>
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
-                <Target className="w-4 h-4 text-amber shrink-0" />
                 <span>
                   Your goal:{" "}
                   <span className="text-foreground font-medium">{goal}</span>
                 </span>
                 <button
                   onClick={() => setStep("goal")}
-                  className="ml-auto text-xs text-amber hover:underline"
+                  className="ml-auto text-xs text-soft-blue hover:underline"
                 >
                   Change
                 </button>
@@ -215,7 +256,7 @@ export function Demo() {
                 />
                 <Button
                   size="sm"
-                  className="absolute right-1 top-1 bg-amber text-amber-foreground hover:bg-amber/90"
+                  className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/90"
                   onClick={handleAnalyze}
                   disabled={!url.trim() || isAnalyzing}
                 >
@@ -225,10 +266,7 @@ export function Demo() {
                       Analyzing...
                     </>
                   ) : (
-                    <>
-                      <Sparkles className="w-3 h-3 mr-1" />
-                      Summarize
-                    </>
+                    "Summarize"
                   )}
                 </Button>
               </div>
@@ -236,8 +274,7 @@ export function Demo() {
               {isAnalyzing && (
                 <div className="flex items-center justify-center gap-3 py-8">
                   <div className="relative">
-                    <div className="w-12 h-12 rounded-full border-2 border-amber/20 border-t-amber animate-spin" />
-                    <Sparkles className="w-5 h-5 text-amber absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <div className="w-10 h-10 rounded-full border-2 border-soft-blue/20 border-t-soft-blue animate-spin" />
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-medium">AI is reading...</p>
@@ -254,28 +291,23 @@ export function Demo() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-emerald/10">
-                    <CheckCircle2 className="w-4 h-4 text-emerald" />
-                  </div>
+                  <CheckCircle2 className="w-4 h-4 text-soft-blue" />
                   <h3 className="font-semibold">Your AI Brief</h3>
                 </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={handleCopy}
-                    className="p-2 rounded-lg hover:bg-secondary transition-colors"
-                    title="Copy summary"
-                  >
-                    {copied ? (
-                      <Check className="w-4 h-4 text-emerald" />
-                    ) : (
-                      <Copy className="w-4 h-4 text-muted-foreground" />
-                    )}
-                  </button>
-                </div>
+                <button
+                  onClick={handleCopy}
+                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
+                  title="Copy summary"
+                >
+                  {copied ? (
+                    <Check className="w-4 h-4 text-soft-blue" />
+                  ) : (
+                    <Copy className="w-4 h-4 text-muted-foreground" />
+                  )}
+                </button>
               </div>
 
               <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
-                <Target className="w-4 h-4 text-amber shrink-0" />
                 <span>
                   Goal:{" "}
                   <span className="text-foreground font-medium">{goal}</span>
@@ -305,7 +337,7 @@ export function Demo() {
                     <div
                       className={`px-3 py-1 rounded-lg border text-sm font-semibold shrink-0 ${getScoreColor(result.relevanceScore)}`}
                     >
-                      {result.relevanceScore}% match
+                      {result.relevanceScore}%
                     </div>
                   )}
                 </div>
@@ -317,7 +349,7 @@ export function Demo() {
                 {result.keyInsights.length > 0 && (
                   <div className="space-y-2">
                     <h5 className="text-sm font-medium text-foreground">
-                      Key Insights for Your Goal:
+                      Key Insights
                     </h5>
                     <ul className="space-y-2">
                       {result.keyInsights.map((insight, i) => (
@@ -325,7 +357,7 @@ export function Demo() {
                           key={i}
                           className="flex items-start gap-2 text-sm text-muted-foreground"
                         >
-                          <Flame className="w-4 h-4 text-amber shrink-0 mt-0.5" />
+                          <span className="text-soft-blue shrink-0">—</span>
                           <span>{insight}</span>
                         </li>
                       ))}
@@ -344,8 +376,7 @@ export function Demo() {
                   Try another URL
                 </Button>
                 <span className="text-xs text-muted-foreground">
-                  Imagine this for every article, every day, tailored to your
-                  goal.
+                  Imagine this for every article, every day.
                 </span>
               </div>
             </div>
