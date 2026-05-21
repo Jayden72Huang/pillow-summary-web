@@ -153,17 +153,17 @@ export function Demo() {
     <section
       id="demo"
       ref={demoRef}
-      className="py-24 px-6"
+      className="py-28 px-6"
     >
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-12">
           <Badge
             variant="outline"
-            className="mb-4 border-soft-blue/30 text-soft-blue"
+            className="mb-5 border-soft-blue/20 text-soft-blue bg-soft-blue/5"
           >
             Live Demo
           </Badge>
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
+          <h2 className="text-3xl md:text-5xl font-bold mb-5">
             See it in action
           </h2>
           <p className="text-muted-foreground">
@@ -171,12 +171,14 @@ export function Demo() {
           </p>
         </div>
 
-        <div className="bg-card/50 border border-border rounded-2xl p-8 backdrop-blur-sm">
+        <div className="relative">
+          <div className="absolute -inset-1 bg-gradient-to-b from-soft-blue/20 via-soft-pink/10 to-transparent rounded-[1.25rem] blur-sm" />
+          <div className="relative bg-background border border-white/[0.08] rounded-2xl p-8">
           {step === "goal" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-6 h-6 rounded-full bg-soft-blue/20 flex items-center justify-center">
-                  <span className="text-xs font-mono text-soft-blue">1</span>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-soft-blue/30 to-soft-blue/10 flex items-center justify-center">
+                  <span className="text-xs font-bold text-soft-blue">1</span>
                 </div>
                 <h3 className="font-semibold">
                   What do you want to learn?
@@ -188,7 +190,7 @@ export function Demo() {
                   <button
                     key={g}
                     onClick={() => handleSetGoal(g)}
-                    className="p-3 text-left text-sm rounded-xl border border-border hover:border-soft-blue/30 hover:bg-soft-blue/5 transition-all"
+                    className="p-3 text-left text-sm rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-soft-blue/30 hover:bg-soft-blue/5 transition-all"
                   >
                     {g}
                   </button>
@@ -203,7 +205,7 @@ export function Demo() {
                   onKeyDown={(e) =>
                     e.key === "Enter" && goal.trim() && handleSetGoal(goal)
                   }
-                  className="pr-20 bg-secondary/50 border-border"
+                  className="pr-20 bg-white/[0.03] border-white/[0.08]"
                 />
                 {goal.trim() && (
                   <Button
@@ -222,17 +224,17 @@ export function Demo() {
           {step === "url" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-6 h-6 rounded-full bg-soft-pink/20 flex items-center justify-center">
-                  <span className="text-xs font-mono text-soft-pink">2</span>
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-soft-pink/30 to-soft-pink/10 flex items-center justify-center">
+                  <span className="text-xs font-bold text-soft-pink">2</span>
                 </div>
                 <h3 className="font-semibold">
                   Paste an article URL
                 </h3>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/[0.03] rounded-lg px-3 py-2 border border-white/[0.06]">
                 <span>
-                  Your goal:{" "}
+                  Goal:{" "}
                   <span className="text-foreground font-medium">{goal}</span>
                 </span>
                 <button
@@ -251,7 +253,7 @@ export function Demo() {
                   onKeyDown={(e) =>
                     e.key === "Enter" && url.trim() && handleAnalyze()
                   }
-                  className="pr-28 bg-secondary/50 border-border"
+                  className="pr-28 bg-white/[0.03] border-white/[0.08]"
                   disabled={isAnalyzing}
                 />
                 <Button
@@ -273,9 +275,7 @@ export function Demo() {
 
               {isAnalyzing && (
                 <div className="flex items-center justify-center gap-3 py-8">
-                  <div className="relative">
-                    <div className="w-10 h-10 rounded-full border-2 border-soft-blue/20 border-t-soft-blue animate-spin" />
-                  </div>
+                  <div className="w-10 h-10 rounded-full border-2 border-soft-blue/20 border-t-soft-blue animate-spin" />
                   <div className="text-left">
                     <p className="text-sm font-medium">AI is reading...</p>
                     <p className="text-xs text-muted-foreground">
@@ -296,7 +296,7 @@ export function Demo() {
                 </div>
                 <button
                   onClick={handleCopy}
-                  className="p-2 rounded-lg hover:bg-secondary transition-colors"
+                  className="p-2 rounded-lg hover:bg-white/[0.05] transition-colors"
                   title="Copy summary"
                 >
                   {copied ? (
@@ -307,7 +307,7 @@ export function Demo() {
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-secondary/40 rounded-lg px-3 py-2">
+              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/[0.03] rounded-lg px-3 py-2 border border-white/[0.06]">
                 <span>
                   Goal:{" "}
                   <span className="text-foreground font-medium">{goal}</span>
@@ -366,12 +366,12 @@ export function Demo() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 pt-4 border-t border-border">
+              <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="border-border"
+                  className="border-white/[0.08]"
                 >
                   Try another URL
                 </Button>
@@ -381,6 +381,7 @@ export function Demo() {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </section>
