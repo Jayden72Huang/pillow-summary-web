@@ -10,75 +10,82 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
-const features: { icon: LucideIcon; title: string; description: string; gradient: string }[] = [
+const features: { icon: LucideIcon; title: string; description: string; color: string; iconColor: string }[] = [
   {
     icon: Target,
     title: "Goal-Driven Reading",
-    description:
-      'Set what you want to learn. Every saved article is scored by how relevant it is to YOUR goal.',
-    gradient: "from-soft-blue/20 to-soft-blue/5",
+    description: "Every saved article is scored by how relevant it is to YOUR goal.",
+    color: "bg-earth-teal",
+    iconColor: "text-earth-teal-foreground",
   },
   {
     icon: BrainCircuit,
     title: "AI Daily Brief",
-    description:
-      "Every evening, get a 3-minute knowledge brief. AI extracts the key insights organized around your goal.",
-    gradient: "from-soft-pink/20 to-soft-pink/5",
+    description: "Every evening, a 3-minute knowledge brief with key insights.",
+    color: "bg-earth-rose",
+    iconColor: "text-earth-rose-foreground",
   },
   {
     icon: Link2,
     title: "Save From Anywhere",
-    description:
-      "Paste a URL and we'll extract, summarize, and score it. Articles, YouTube, tweets, newsletters — anything.",
-    gradient: "from-soft-gold/20 to-soft-gold/5",
+    description: "Articles, YouTube, tweets, newsletters — paste any URL.",
+    color: "bg-earth-olive",
+    iconColor: "text-earth-olive-foreground",
   },
   {
     icon: TrendingUp,
     title: "Learning Streaks",
-    description:
-      "Build a daily reading habit with gentle streak tracking. See your knowledge grow over time.",
-    gradient: "from-soft-blue/20 to-soft-blue/5",
+    description: "Build a daily reading habit with gentle streak tracking.",
+    color: "bg-earth-orange",
+    iconColor: "text-earth-orange-foreground",
   },
   {
     icon: Clock,
     title: "Bedtime Mode",
-    description:
-      "Designed for your wind-down routine. Calm typography, distraction-free reading experience.",
-    gradient: "from-soft-pink/20 to-soft-pink/5",
+    description: "Calm typography, distraction-free reading experience.",
+    color: "bg-earth-navy",
+    iconColor: "text-earth-navy-foreground",
   },
   {
     icon: Shield,
-    title: "Your Data, Your Control",
-    description:
-      "Export anytime. Your highlights, notes, and progress are always yours.",
-    gradient: "from-soft-gold/20 to-soft-gold/5",
+    title: "Your Data",
+    description: "Export anytime. Your highlights and progress are always yours.",
+    color: "bg-earth-teal",
+    iconColor: "text-earth-teal-foreground",
   },
 ];
 
 export function Features() {
   return (
-    <section id="features" className="py-28 px-6">
+    <section id="features" className="py-24 px-6 border-t border-foreground/10">
       <div className="max-w-5xl mx-auto">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl font-bold mb-5">
-            Not another read-later app.
-          </h2>
-          <p className="text-lg text-muted-foreground max-w-xl mx-auto">
-            AI that understands what you&apos;re trying to learn.
-          </p>
+        <div className="flex items-end justify-between mb-14">
+          <div>
+            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/35 block mb-4">
+              Features
+            </span>
+            <h2 className="font-stencil text-4xl md:text-6xl text-foreground">
+              Not another
+              <br />
+              read-later app.
+            </h2>
+          </div>
+          <span className="font-mono text-[10px] tracking-wider text-foreground/25 hidden md:block">
+            02 / 05
+          </span>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {features.map((feature) => (
             <div
               key={feature.title}
-              className={`group relative p-6 rounded-2xl bg-gradient-to-b ${feature.gradient} border border-white/[0.06] hover:border-white/[0.12] transition-all duration-500`}
+              className={`${feature.color} p-6 md:p-8 group transition-all duration-300 hover:scale-[1.02]`}
             >
-              <div className="w-10 h-10 rounded-xl bg-white/[0.06] flex items-center justify-center mb-4">
-                <feature.icon className="w-5 h-5 text-foreground/70" />
-              </div>
-              <h3 className="text-base font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
+              <feature.icon className={`w-6 h-6 ${feature.iconColor} mb-6 opacity-70`} />
+              <h3 className={`font-stencil text-xl md:text-2xl ${feature.iconColor} mb-2`}>
+                {feature.title}
+              </h3>
+              <p className={`text-sm ${feature.iconColor} opacity-60 leading-relaxed`}>
                 {feature.description}
               </p>
             </div>

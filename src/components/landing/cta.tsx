@@ -5,31 +5,40 @@ import { Button } from "@/components/ui/button";
 
 export function CTA({ onTryDemo }: { onTryDemo: () => void }) {
   return (
-    <section className="py-28 px-6">
-      <div className="max-w-3xl mx-auto relative">
-        <div className="absolute inset-0 bg-gradient-to-br from-soft-blue/10 via-soft-pink/8 to-soft-gold/6 rounded-3xl blur-xl" />
-        <div className="relative bg-white/[0.02] border border-white/[0.08] rounded-3xl p-16 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-5">
-            Your &quot;read later&quot; graveyard
-            <br />
-            <span className="bg-gradient-to-r from-soft-blue to-soft-pink bg-clip-text text-transparent">
-              ends here.
-            </span>
+    <section className="py-24 px-6 border-t border-foreground/10">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex items-end justify-between mb-14">
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/35">
+            Get Started
+          </span>
+          <span className="font-mono text-[10px] tracking-wider text-foreground/25 hidden md:block">
+            05 / 05
+          </span>
+        </div>
+
+        <div className="bg-earth-navy p-12 md:p-20 relative overflow-hidden">
+          {/* Decorative accent */}
+          <div className="absolute top-8 right-8 w-14 h-14 bg-earth-orange" />
+
+          <h2 className="font-stencil text-4xl md:text-7xl text-earth-navy-foreground mb-6 max-w-xl leading-[0.95]">
+            Your &quot;read later&quot; graveyard ends here.
           </h2>
-          <p className="text-lg text-muted-foreground mb-10 max-w-lg mx-auto">
+          <p className="text-earth-navy-foreground/50 mb-10 max-w-md">
             Try the demo right now to see how AI turns saved articles into real knowledge.
           </p>
-          <Button
-            size="lg"
-            className="bg-foreground text-background hover:bg-foreground/90 text-base px-8 py-6 rounded-full font-medium shadow-[0_0_40px_rgba(255,255,255,0.1)]"
-            onClick={onTryDemo}
-          >
-            Try the Demo
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
-          <p className="text-sm text-muted-foreground mt-6">
-            Free to try &middot; No signup required
-          </p>
+          <div className="flex items-center gap-6">
+            <Button
+              size="lg"
+              className="bg-earth-navy-foreground text-earth-navy hover:bg-earth-navy-foreground/90 text-sm px-7 py-5 rounded-none font-mono tracking-[0.1em] uppercase"
+              onClick={onTryDemo}
+            >
+              Try the Demo
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+            <span className="font-mono text-[10px] tracking-[0.1em] uppercase text-earth-navy-foreground/30">
+              Free · No signup
+            </span>
+          </div>
         </div>
       </div>
     </section>

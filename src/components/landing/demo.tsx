@@ -144,53 +144,50 @@ export function Demo() {
   };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-soft-blue bg-soft-blue/10 border-soft-blue/30";
-    if (score >= 50) return "text-soft-gold bg-soft-gold/10 border-soft-gold/30";
-    return "text-muted-foreground bg-secondary border-border";
+    if (score >= 80) return "text-earth-teal-foreground bg-earth-teal";
+    if (score >= 50) return "text-earth-orange-foreground bg-earth-orange";
+    return "text-foreground/50 bg-foreground/5";
   };
 
   return (
     <section
       id="demo"
       ref={demoRef}
-      className="py-28 px-6"
+      className="py-24 px-6 border-t border-foreground/10"
     >
       <div className="max-w-2xl mx-auto">
-        <div className="text-center mb-12">
-          <Badge
-            variant="outline"
-            className="mb-5 border-soft-blue/20 text-soft-blue bg-soft-blue/5"
-          >
-            Live Demo
-          </Badge>
-          <h2 className="text-3xl md:text-5xl font-bold mb-5">
-            See it in action
-          </h2>
-          <p className="text-muted-foreground">
-            Set a goal, paste a URL, and watch AI extract what matters.
-          </p>
+        <div className="flex items-end justify-between mb-14">
+          <div>
+            <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/35 block mb-4">
+              Live Demo
+            </span>
+            <h2 className="font-stencil text-4xl md:text-6xl text-foreground">
+              See it in action
+            </h2>
+          </div>
+          <span className="font-mono text-[10px] tracking-wider text-foreground/25 hidden md:block">
+            04 / 05
+          </span>
         </div>
 
-        <div className="relative">
-          <div className="absolute -inset-1 bg-gradient-to-b from-soft-blue/20 via-soft-pink/10 to-transparent rounded-[1.25rem] blur-sm" />
-          <div className="relative bg-background border border-white/[0.08] rounded-2xl p-8">
+        <div className="border border-foreground/10 p-8 bg-background">
           {step === "goal" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-soft-blue/30 to-soft-blue/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-soft-blue">1</span>
+                <div className="w-8 h-8 bg-earth-teal flex items-center justify-center">
+                  <span className="font-stencil text-sm text-earth-teal-foreground">1</span>
                 </div>
-                <h3 className="font-semibold">
+                <h3 className="font-stencil text-xl text-foreground">
                   What do you want to learn?
                 </h3>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-2 gap-2">
                 {presetGoals.map((g) => (
                   <button
                     key={g}
                     onClick={() => handleSetGoal(g)}
-                    className="p-3 text-left text-sm rounded-xl border border-white/[0.06] bg-white/[0.02] hover:border-soft-blue/30 hover:bg-soft-blue/5 transition-all"
+                    className="p-3 text-left text-sm border border-foreground/10 hover:border-foreground/30 hover:bg-foreground/[0.03] transition-all text-foreground/60 hover:text-foreground"
                   >
                     {g}
                   </button>
@@ -205,12 +202,12 @@ export function Demo() {
                   onKeyDown={(e) =>
                     e.key === "Enter" && goal.trim() && handleSetGoal(goal)
                   }
-                  className="pr-20 bg-white/[0.03] border-white/[0.08]"
+                  className="pr-20 bg-transparent border-foreground/10 rounded-none text-foreground placeholder:text-foreground/25"
                 />
                 {goal.trim() && (
                   <Button
                     size="sm"
-                    className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/90"
+                    className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/85 rounded-none font-mono text-xs tracking-wider uppercase"
                     onClick={() => handleSetGoal(goal)}
                   >
                     Next
@@ -224,22 +221,22 @@ export function Demo() {
           {step === "url" && (
             <div className="space-y-6">
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-soft-pink/30 to-soft-pink/10 flex items-center justify-center">
-                  <span className="text-xs font-bold text-soft-pink">2</span>
+                <div className="w-8 h-8 bg-earth-rose flex items-center justify-center">
+                  <span className="font-stencil text-sm text-earth-rose-foreground">2</span>
                 </div>
-                <h3 className="font-semibold">
+                <h3 className="font-stencil text-xl text-foreground">
                   Paste an article URL
                 </h3>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/[0.03] rounded-lg px-3 py-2 border border-white/[0.06]">
+              <div className="flex items-center gap-2 text-sm text-foreground/40 bg-foreground/[0.03] px-3 py-2 border border-foreground/8">
                 <span>
                   Goal:{" "}
-                  <span className="text-foreground font-medium">{goal}</span>
+                  <span className="text-foreground/70">{goal}</span>
                 </span>
                 <button
                   onClick={() => setStep("goal")}
-                  className="ml-auto text-xs text-soft-blue hover:underline"
+                  className="ml-auto font-mono text-[10px] tracking-wider uppercase text-earth-teal hover:text-earth-teal/70"
                 >
                   Change
                 </button>
@@ -253,19 +250,19 @@ export function Demo() {
                   onKeyDown={(e) =>
                     e.key === "Enter" && url.trim() && handleAnalyze()
                   }
-                  className="pr-28 bg-white/[0.03] border-white/[0.08]"
+                  className="pr-28 bg-transparent border-foreground/10 rounded-none text-foreground placeholder:text-foreground/25"
                   disabled={isAnalyzing}
                 />
                 <Button
                   size="sm"
-                  className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/90"
+                  className="absolute right-1 top-1 bg-foreground text-background hover:bg-foreground/85 rounded-none font-mono text-xs tracking-wider uppercase"
                   onClick={handleAnalyze}
                   disabled={!url.trim() || isAnalyzing}
                 >
                   {isAnalyzing ? (
                     <>
                       <Loader2 className="w-3 h-3 mr-1 animate-spin" />
-                      Analyzing...
+                      Wait
                     </>
                   ) : (
                     "Summarize"
@@ -275,10 +272,10 @@ export function Demo() {
 
               {isAnalyzing && (
                 <div className="flex items-center justify-center gap-3 py-8">
-                  <div className="w-10 h-10 rounded-full border-2 border-soft-blue/20 border-t-soft-blue animate-spin" />
+                  <div className="w-8 h-8 border-2 border-foreground/10 border-t-earth-teal animate-spin" />
                   <div className="text-left">
-                    <p className="text-sm font-medium">AI is reading...</p>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-sm text-foreground/60">AI is reading...</p>
+                    <p className="text-xs text-foreground/30">
                       Extracting key insights for your goal
                     </p>
                   </div>
@@ -291,43 +288,45 @@ export function Demo() {
             <div className="space-y-6">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <CheckCircle2 className="w-4 h-4 text-soft-blue" />
-                  <h3 className="font-semibold">Your AI Brief</h3>
+                  <CheckCircle2 className="w-4 h-4 text-earth-teal" />
+                  <span className="font-mono text-[10px] tracking-[0.15em] uppercase text-foreground/40">
+                    Your AI Brief
+                  </span>
                 </div>
                 <button
                   onClick={handleCopy}
-                  className="p-2 rounded-lg hover:bg-white/[0.05] transition-colors"
+                  className="p-2 hover:bg-foreground/5 transition-colors"
                   title="Copy summary"
                 >
                   {copied ? (
-                    <Check className="w-4 h-4 text-soft-blue" />
+                    <Check className="w-4 h-4 text-earth-teal" />
                   ) : (
-                    <Copy className="w-4 h-4 text-muted-foreground" />
+                    <Copy className="w-4 h-4 text-foreground/30" />
                   )}
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white/[0.03] rounded-lg px-3 py-2 border border-white/[0.06]">
+              <div className="flex items-center gap-2 text-sm text-foreground/40 bg-foreground/[0.03] px-3 py-2 border border-foreground/8">
                 <span>
                   Goal:{" "}
-                  <span className="text-foreground font-medium">{goal}</span>
+                  <span className="text-foreground/70">{goal}</span>
                 </span>
               </div>
 
               <div className="space-y-4">
                 <div className="flex items-start justify-between gap-4">
                   <div>
-                    <h4 className="font-semibold text-lg leading-tight">
+                    <h4 className="font-stencil text-2xl leading-tight text-foreground">
                       {result.title}
                     </h4>
-                    <div className="flex items-center gap-2 mt-1">
+                    <div className="flex items-center gap-2 mt-1.5">
                       {result.platform !== "unknown" && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge variant="secondary" className="text-[10px] font-mono tracking-wider uppercase rounded-none bg-foreground/5 text-foreground/50 border-foreground/10">
                           {result.platform}
                         </Badge>
                       )}
                       {result.readTime !== "-" && (
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-[11px] text-foreground/30">
                           {result.readTime} read
                         </span>
                       )}
@@ -335,29 +334,29 @@ export function Demo() {
                   </div>
                   {result.relevanceScore > 0 && (
                     <div
-                      className={`px-3 py-1 rounded-lg border text-sm font-semibold shrink-0 ${getScoreColor(result.relevanceScore)}`}
+                      className={`px-3 py-1 text-sm font-mono shrink-0 ${getScoreColor(result.relevanceScore)}`}
                     >
                       {result.relevanceScore}%
                     </div>
                   )}
                 </div>
 
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-foreground/50 leading-relaxed text-sm">
                   {result.summary}
                 </p>
 
                 {result.keyInsights.length > 0 && (
-                  <div className="space-y-2">
-                    <h5 className="text-sm font-medium text-foreground">
+                  <div className="space-y-2 pt-2">
+                    <h5 className="font-mono text-[10px] tracking-[0.15em] uppercase text-foreground/35">
                       Key Insights
                     </h5>
                     <ul className="space-y-2">
                       {result.keyInsights.map((insight, i) => (
                         <li
                           key={i}
-                          className="flex items-start gap-2 text-sm text-muted-foreground"
+                          className="flex items-start gap-3 text-sm text-foreground/50"
                         >
-                          <span className="text-soft-blue shrink-0">—</span>
+                          <span className="text-earth-teal shrink-0 mt-0.5">—</span>
                           <span>{insight}</span>
                         </li>
                       ))}
@@ -366,22 +365,18 @@ export function Demo() {
                 )}
               </div>
 
-              <div className="flex items-center gap-3 pt-4 border-t border-white/[0.06]">
+              <div className="flex items-center gap-3 pt-4 border-t border-foreground/8">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={handleReset}
-                  className="border-white/[0.08]"
+                  className="border-foreground/10 text-foreground/50 hover:text-foreground hover:bg-foreground/5 rounded-none font-mono text-xs tracking-wider uppercase"
                 >
                   Try another URL
                 </Button>
-                <span className="text-xs text-muted-foreground">
-                  Imagine this for every article, every day.
-                </span>
               </div>
             </div>
           )}
-          </div>
         </div>
       </div>
     </section>
