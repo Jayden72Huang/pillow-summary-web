@@ -12,7 +12,19 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover" as const,
+  themeColor: "#1a1a2e",
+};
+
 export const metadata: Metadata = {
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Pillow Summary",
+  },
   title: "Pillow Summary - AI Daily Knowledge Brief",
   description:
     "Stop saving articles you'll never read. Set a learning goal, and get a personalized 3-minute AI knowledge brief every day.",
@@ -51,7 +63,7 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col env-safe-area">{children}</body>
     </html>
   );
 }

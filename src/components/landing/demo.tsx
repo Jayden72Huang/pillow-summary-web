@@ -57,7 +57,8 @@ export function Demo() {
     setIsAnalyzing(true);
 
     try {
-      const res = await fetch("/api/summarize", {
+      const apiBase = process.env.NEXT_PUBLIC_API_BASE || "";
+      const res = await fetch(`${apiBase}/api/summarize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url: url.trim(), goal }),
